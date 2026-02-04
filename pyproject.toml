@@ -1,0 +1,191 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "biceps-check"
+version = "0.1.0"
+description = "A comprehensive security scanning tool for Azure Bicep templates"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+keywords = [
+    "azure",
+    "bicep",
+    "security",
+    "iac",
+    "infrastructure-as-code",
+    "static-analysis",
+    "compliance",
+    "devops",
+    "devsecops"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0.0",
+    "structlog>=23.0.0",
+    "jinja2>=3.1.0",
+    "jsonschema>=4.17.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.11.0",
+    "ty>=0.0.1a0",
+    "ruff>=0.1.0",
+    "pre-commit>=3.4.0",
+    "types-PyYAML>=6.0.0",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.23.0",
+]
+
+[project.scripts]
+biceps-check = "biceps_check.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/biceps-check"
+Documentation = "https://docs.biceps-check.io"
+Repository = "https://github.com/your-org/biceps-check"
+Issues = "https://github.com/your-org/biceps-check/issues"
+Changelog = "https://github.com/your-org/biceps-check/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/biceps_check"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/docs",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "-ra",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+
+[tool.coverage.run]
+source = ["src/biceps_check"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+fail_under = 80
+show_missing = true
+
+# ty - Astral's fast Python type checker
+[tool.ty.environment]
+python-version = "3.10"
+extra-paths = ["src"]
+
+[tool.ty.rules]
+# Enable strict type checking
+invalid-argument-type = "error"
+invalid-return-type = "error"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "S",   # flake8-bandit
+    "DTZ", # flake8-datetimez
+    "T10", # flake8-debugger
+    "PIE", # flake8-pie
+    "PT",  # flake8-pytest-style
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501",    # line too long
+    "B008",    # do not perform function calls in argument defaults
+    "S101",    # use of assert (needed for tests)
+    "F403",    # import * used (intentional in checks modules)
+    "F405",    # name may be undefined from import *
+    "SIM102",  # nested if - sometimes more readable
+    "SIM103",  # return bool directly - sometimes less readable
+    "SIM108",  # ternary operator - sometimes less readable
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = ["S101", "PLR2004", "ARG001", "F401"]
+"src/biceps_check/checks/**/__init__.py" = ["F401", "F403"]
+"src/biceps_check/checks/**/*.py" = ["RUF012"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["biceps_check"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = ["biceps_check"]
+skip_gitignore = true
