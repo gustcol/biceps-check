@@ -35,26 +35,31 @@ Biceps-Check analyzes your Azure Bicep infrastructure-as-code (IaC) files and de
 
 ### Why Biceps-Check?
 
-Modern cloud infrastructure is defined as code, but security often becomes an afterthought. Biceps-Check addresses this by:
+Modern cloud infrastructure is defined as code, but security often becomes an afterthought. Biceps-Check addresses this by shifting security left:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        TRADITIONAL APPROACH                                  │
-│                                                                              │
-│   Developer → Deploy → Security Audit → Find Issues → Rollback → Fix        │
-│       ↓                                      ↑                               │
-│   [SLOW]                              [EXPENSIVE]                            │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph traditional ["❌ Traditional Approach"]
+        direction LR
+        A1[Developer] --> A2[Deploy]
+        A2 --> A3[Security Audit]
+        A3 --> A4[Find Issues]
+        A4 --> A5[Rollback]
+        A5 --> A6[Fix]
+        A6 -.-> A1
+    end
 
-                              vs.
+    subgraph shiftleft ["✅ Shift-Left with Biceps-Check"]
+        direction LR
+        B1[Developer] --> B2[Biceps-Check]
+        B2 --> B3[Fix]
+        B3 --> B4[Deploy Secure!]
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                     SHIFT-LEFT WITH BICEPS-CHECK                             │
-│                                                                              │
-│   Developer → Biceps-Check → Fix → Deploy (Secure!)                         │
-│       ↓            ↓                                                         │
-│   [FAST]    [AUTOMATED]                                                      │
-└─────────────────────────────────────────────────────────────────────────────┘
+    traditional ~~~ shiftleft
+
+    style traditional fill:#ffebee,stroke:#c62828
+    style shiftleft fill:#e8f5e9,stroke:#2e7d32
 ```
 
 ### Key Benefits
@@ -73,63 +78,62 @@ Modern cloud infrastructure is defined as code, but security often becomes an af
 
 Biceps-Check follows a modular, extensible architecture inspired by Checkov:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            BICEPS-CHECK ARCHITECTURE                         │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph input ["📄 Input"]
+        BICEP[".bicep Files"]
+    end
 
-                              ┌─────────────┐
-                              │  Bicep File │
-                              │   (.bicep)  │
-                              └──────┬──────┘
-                                     │
-                                     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              PARSER LAYER                                    │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                         BicepParser                                  │   │
-│  │  • Tokenizes Bicep syntax                                           │   │
-│  │  • Extracts resources, parameters, variables                        │   │
-│  │  • Builds BicepResource objects with properties                     │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                     │
-                                     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              RULE ENGINE                                     │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                   │
-│  │  RuleRegistry │  │   BaseRule    │  │  RuleResult   │                   │
-│  │               │  │               │  │               │                   │
-│  │ • Discovery   │  │ • id          │  │ • PASSED      │                   │
-│  │ • Loading     │  │ • severity    │  │ • FAILED      │                   │
-│  │ • Filtering   │  │ • check()     │  │ • SKIPPED     │                   │
-│  └───────────────┘  └───────────────┘  └───────────────┘                   │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                     │
-                                     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            SECURITY CHECKS                                   │
-│                                                                              │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐          │
-│  │ Compute  │ │ Database │ │ Storage  │ │ Identity │ │ Network  │          │
-│  │  (48)    │ │   (42)   │ │   (10)   │ │    (9)   │ │   (7)    │          │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘          │
-│                                                                              │
-│  ┌──────────┐ ┌──────────┐                                                  │
-│  │Messaging │ │Integration│                                                  │
-│  │   (16)   │ │    (7)   │                                                  │
-│  └──────────┘ └──────────┘                                                  │
-│                                                                              │
-│                        TOTAL: 139 SECURITY RULES                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                     │
-                                     ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            OUTPUT FORMATTERS                                 │
-│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐         │
-│  │  CLI   │ │  JSON  │ │ SARIF  │ │ JUnit  │ │  CSV   │ │  HTML  │         │
-│  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘ └────────┘         │
-└─────────────────────────────────────────────────────────────────────────────┘
+    subgraph parser ["🔍 Parser Layer"]
+        BP[BicepParser]
+        BP --> |Tokenize| TOK[Tokens]
+        TOK --> |Extract| RES[BicepResource Objects]
+    end
+
+    subgraph engine ["⚙️ Rule Engine"]
+        REG[RuleRegistry]
+        BASE[BaseRule]
+        RESULT[RuleResult]
+
+        REG --> |Discovery| BASE
+        REG --> |Loading| BASE
+        REG --> |Filtering| BASE
+        BASE --> |PASSED| RESULT
+        BASE --> |FAILED| RESULT
+        BASE --> |SKIPPED| RESULT
+    end
+
+    subgraph checks ["🛡️ Security Checks (139 Rules)"]
+        direction LR
+        C1["Compute\n(48)"]
+        C2["Database\n(42)"]
+        C3["Storage\n(10)"]
+        C4["Identity\n(9)"]
+        C5["Networking\n(7)"]
+        C6["Messaging\n(16)"]
+        C7["Integration\n(7)"]
+    end
+
+    subgraph output ["📊 Output Formatters"]
+        direction LR
+        O1[CLI]
+        O2[JSON]
+        O3[SARIF]
+        O4[JUnit]
+        O5[CSV]
+        O6[HTML]
+    end
+
+    BICEP --> BP
+    RES --> REG
+    BASE --> checks
+    checks --> output
+
+    style input fill:#e3f2fd,stroke:#1976d2
+    style parser fill:#fff3e0,stroke:#f57c00
+    style engine fill:#f3e5f5,stroke:#7b1fa2
+    style checks fill:#e8f5e9,stroke:#388e3c
+    style output fill:#fce4ec,stroke:#c2185b
 ```
 
 ### Component Responsibilities
@@ -149,104 +153,67 @@ Biceps-Check follows a modular, extensible architecture inspired by Checkov:
 
 ### Scanning Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           SCANNING WORKFLOW                                  │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A[📄 Input Files<br/>*.bicep] --> B[Parse Phase]
 
-     ┌──────────────────┐
-     │   INPUT FILES    │
-     │  *.bicep files   │
-     └────────┬─────────┘
-              │
-              ▼
-     ┌──────────────────┐
-     │   PARSE PHASE    │
-     │                  │
-     │  For each file:  │
-     │  1. Read content │
-     │  2. Tokenize     │
-     │  3. Extract      │
-     │     resources    │
-     └────────┬─────────┘
-              │
-              ▼
-     ┌──────────────────┐
-     │  ANALYSIS PHASE  │
-     │                  │
-     │  For each        │
-     │  resource:       │
-     │  1. Match rules  │──────────────┐
-     │  2. Run checks   │              │
-     │  3. Collect      │              │
-     │     results      │              │
-     └────────┬─────────┘              │
-              │                        │
-              │         ┌──────────────▼──────────────┐
-              │         │      RULE MATCHING          │
-              │         │                             │
-              │         │  Resource Type:             │
-              │         │  Microsoft.Storage/         │
-              │         │  storageAccounts            │
-              │         │         │                   │
-              │         │         ▼                   │
-              │         │  Applicable Rules:          │
-              │         │  • BCK_AZURE_ST_001         │
-              │         │  • BCK_AZURE_ST_002         │
-              │         │  • ...                      │
-              │         └─────────────────────────────┘
-              │
-              ▼
-     ┌──────────────────┐
-     │   REPORT PHASE   │
-     │                  │
-     │  1. Aggregate    │
-     │  2. Format       │
-     │  3. Output       │
-     └──────────────────┘
+    subgraph B [Parse Phase]
+        B1[Read Content] --> B2[Tokenize]
+        B2 --> B3[Extract Resources]
+    end
+
+    B --> C[Analysis Phase]
+
+    subgraph C [Analysis Phase]
+        C1[Match Rules by<br/>Resource Type] --> C2[Run Checks]
+        C2 --> C3[Collect Results]
+    end
+
+    C --> D[Rule Matching]
+
+    subgraph D [Rule Matching]
+        D1["Resource Type:<br/>Microsoft.Storage/<br/>storageAccounts"] --> D2["Applicable Rules:<br/>• BCK_AZURE_ST_001<br/>• BCK_AZURE_ST_002<br/>• ..."]
+    end
+
+    D --> E[Report Phase]
+
+    subgraph E [Report Phase]
+        E1[Aggregate] --> E2[Format]
+        E2 --> E3[Output]
+    end
+
+    style A fill:#e3f2fd,stroke:#1976d2
+    style B fill:#fff3e0,stroke:#f57c00
+    style C fill:#f3e5f5,stroke:#7b1fa2
+    style D fill:#e8f5e9,stroke:#388e3c
+    style E fill:#fce4ec,stroke:#c2185b
 ```
 
 ### Rule Evaluation Process
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        RULE EVALUATION EXAMPLE                               │
-│                                                                              │
-│  Rule: BCK_AZURE_ST_001 - Storage account should enforce HTTPS              │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    autonumber
+    participant B as Bicep Resource
+    participant R as Rule Engine
+    participant C as BCK_AZURE_ST_001
+    participant O as Output
 
-  INPUT (Bicep Resource):
-  ┌─────────────────────────────────────────────────────────────┐
-  │ resource storageAccount 'Microsoft.Storage/storageAccounts │
-  │          @2023-01-01' = {                                   │
-  │   name: 'mystorageaccount'                                  │
-  │   properties: {                                             │
-  │     supportsHttpsTrafficOnly: false  ◄── Security Issue!   │
-  │   }                                                         │
-  │ }                                                           │
-  └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-  RULE CHECK:
-  ┌─────────────────────────────────────────────────────────────┐
-  │ def check(self, resource: BicepResource) -> RuleResult:     │
-  │     https_only = resource.get_property(                     │
-  │         "properties.supportsHttpsTrafficOnly"               │
-  │     )                                                       │
-  │     if https_only is False:                                 │
-  │         return RuleResult.FAILED  ◄── Returns FAILED        │
-  │     return RuleResult.PASSED                                │
-  └─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-  OUTPUT:
-  ┌─────────────────────────────────────────────────────────────┐
-  │ [HIGH] BCK_AZURE_ST_001: Storage account should enforce     │
-  │        HTTPS                                                │
-  │   File: storage.bicep:15                                    │
-  │   Resource: storageAccount                                  │
-  │   Remediation: Set 'supportsHttpsTrafficOnly' to true      │
-  └─────────────────────────────────────────────────────────────┘
+    Note over B: resource storageAccount<br/>'Microsoft.Storage/storageAccounts@2023-01-01'<br/>supportsHttpsTrafficOnly: false
+
+    B->>R: Submit for Analysis
+    R->>R: Match Resource Type
+    R->>C: Execute Check
+
+    Note over C: Check if HTTPS is enforced
+
+    C->>C: get_property("properties.supportsHttpsTrafficOnly")
+    C->>C: Value is false ❌
+    C-->>R: Return FAILED
+
+    R->>O: Generate Finding
+
+    Note over O: [HIGH] BCK_AZURE_ST_001<br/>Storage account should enforce HTTPS<br/>Remediation: Set 'supportsHttpsTrafficOnly' to true
 ```
 
 ---
@@ -272,23 +239,23 @@ Biceps-Check follows a modular, extensible architecture inspired by Checkov:
 
 ### Severity Distribution
 
+```mermaid
+pie showData
+    title Severity Distribution (139 Rules)
+    "CRITICAL (8)" : 8
+    "HIGH (48)" : 48
+    "MEDIUM (74)" : 74
+    "LOW (9)" : 9
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        SEVERITY DISTRIBUTION (139 Rules)                     │
-└─────────────────────────────────────────────────────────────────────────────┘
 
-  CRITICAL ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  8 rules
-  HIGH     █████████████████████████████████████░░░░░░░░░░░░░░░░░░░ 48 rules
-  MEDIUM   ████████████████████████████████████████████████████████ 74 rules
-  LOW      ██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  9 rules
+**Severity Definitions:**
 
-  Legend:
-  ─────────────────────────────────────────────────────────────────
-  CRITICAL : Immediate security risk, must fix before deployment
-  HIGH     : Significant security risk, fix as soon as possible
-  MEDIUM   : Moderate security risk, fix in regular maintenance
-  LOW      : Minor security concern or best practice deviation
-```
+| Severity | Description |
+|----------|-------------|
+| **CRITICAL** | Immediate security risk, must fix before deployment |
+| **HIGH** | Significant security risk, fix as soon as possible |
+| **MEDIUM** | Moderate security risk, fix in regular maintenance |
+| **LOW** | Minor security concern or best practice deviation |
 
 ---
 
@@ -393,40 +360,27 @@ Summary: 3 passed, 7 failed
 
 ### Rules by Category
 
+```mermaid
+pie showData
+    title Rules by Category (139 Total)
+    "Compute (48)" : 48
+    "Database (42)" : 42
+    "Messaging (16)" : 16
+    "Storage (10)" : 10
+    "Identity (9)" : 9
+    "Networking (7)" : 7
+    "Integration (7)" : 7
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           RULES BY CATEGORY                                  │
-└─────────────────────────────────────────────────────────────────────────────┘
 
-  Category       Rules   Azure Resources Covered
-  ─────────────────────────────────────────────────────────────────────────────
-
-  COMPUTE         48     • Microsoft.Compute/virtualMachines (10 rules)
-                         • Microsoft.ContainerRegistry/registries (10 rules)
-                         • Microsoft.ContainerService/managedClusters (10 rules)
-                         • Microsoft.Web/sites (10 rules)
-                         • Microsoft.Web/sites (Functions) (8 rules)
-
-  DATABASE        42     • Microsoft.Sql/servers (7 rules)
-                         • Microsoft.DocumentDB/databaseAccounts (7 rules)
-                         • Microsoft.DBforMySQL/flexibleServers (8 rules)
-                         • Microsoft.DBforPostgreSQL/flexibleServers (10 rules)
-                         • Microsoft.Cache/Redis (10 rules)
-
-  MESSAGING       16     • Microsoft.ServiceBus/namespaces (8 rules)
-                         • Microsoft.EventHub/namespaces (8 rules)
-
-  STORAGE         10     • Microsoft.Storage/storageAccounts (10 rules)
-
-  IDENTITY         9     • Microsoft.KeyVault/vaults (9 rules)
-
-  NETWORKING       7     • Microsoft.Network/networkSecurityGroups (7 rules)
-
-  INTEGRATION      7     • Microsoft.DataFactory/factories (7 rules)
-
-  ─────────────────────────────────────────────────────────────────────────────
-  TOTAL          139
-```
+| Category | Rules | Azure Resources Covered |
+|----------|-------|-------------------------|
+| **Compute** | 48 | VMs, AKS, ACR, App Service, Functions |
+| **Database** | 42 | SQL, Cosmos DB, MySQL, PostgreSQL, Redis |
+| **Messaging** | 16 | Service Bus, Event Hub |
+| **Storage** | 10 | Storage Accounts |
+| **Identity** | 9 | Key Vault |
+| **Networking** | 7 | NSGs |
+| **Integration** | 7 | Data Factory |
 
 ### Complete Rule List
 
@@ -675,25 +629,19 @@ Biceps-Check maps security rules to industry compliance frameworks for audit and
 
 ### Framework Coverage
 
+```mermaid
+xychart-beta
+    title "Compliance Framework Coverage"
+    x-axis ["CIS Azure v5.0.0", "NIST 800-53 Rev 5", "PCI DSS v4.0"]
+    y-axis "Mapped Rules" 0 --> 150
+    bar [76, 137, 28]
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        COMPLIANCE FRAMEWORK MAPPING                          │
-└─────────────────────────────────────────────────────────────────────────────┘
 
-  Framework              Mapped Rules    Coverage
-  ─────────────────────────────────────────────────────────────────────────────
-
-  CIS Azure v5.0.0           76         ██████████████████████████████░░░░  55%
-
-  NIST 800-53 Rev 5         137         ███████████████████████████████████ 99%
-
-  PCI DSS v4.0               28         ████████████░░░░░░░░░░░░░░░░░░░░░░  20%
-
-  ─────────────────────────────────────────────────────────────────────────────
-
-  Note: Percentages indicate proportion of Biceps-Check rules with framework
-        mapping, not total framework coverage.
-```
+| Framework | Mapped Rules | Coverage |
+|-----------|--------------|----------|
+| **CIS Azure v5.0.0** | 76 | 55% of rules |
+| **NIST 800-53 Rev 5** | 137 | 99% of rules |
+| **PCI DSS v4.0** | 28 | 20% of rules |
 
 ### CIS Azure Foundations Benchmark Mapping
 
@@ -712,11 +660,11 @@ The following CIS Azure Foundations Benchmark v5.0.0 controls are covered:
 
 | Control Family | Description | Mapped Rules |
 |----------------|-------------|--------------|
-| AC (Access Control) | Access restrictions and permissions | 35 |
+| AC (Access Control) | Access restrictions and permissions | 32 |
 | AU (Audit) | Logging and audit trails | 18 |
-| CM (Configuration Management) | Secure configuration | 22 |
+| CM (Configuration Management) | Secure configuration | 20 |
 | CP (Contingency Planning) | Backup and recovery | 8 |
-| IA (Identification & Authentication) | Identity verification | 15 |
+| IA (Identification & Authentication) | Identity verification | 14 |
 | SC (System Communications) | Network and data protection | 45 |
 
 ---
@@ -725,37 +673,28 @@ The following CIS Azure Foundations Benchmark v5.0.0 controls are covered:
 
 ### Use Case 1: Pre-Deployment Security Gate
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    USE CASE: CI/CD SECURITY GATE                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    autonumber
+    participant D as Developer
+    participant P as CI/CD Pipeline
+    participant BC as Biceps-Check
+    participant A as Azure
 
-  Developer                Pipeline                   Azure
-     │                        │                         │
-     │  Push Bicep files      │                         │
-     │───────────────────────>│                         │
-     │                        │                         │
-     │                        │  Run Biceps-Check       │
-     │                        │─────────┐               │
-     │                        │         │               │
-     │                        │<────────┘               │
-     │                        │                         │
-     │                   ┌────┴────┐                    │
-     │                   │ Issues? │                    │
-     │                   └────┬────┘                    │
-     │                        │                         │
-     │              ┌─────────┴─────────┐               │
-     │              │                   │               │
-     │           YES│                NO │               │
-     │              │                   │               │
-     │              ▼                   ▼               │
-     │       ┌──────────┐       ┌──────────┐           │
-     │       │  Block   │       │  Deploy  │           │
-     │       │  Build   │       │  to Azure│───────────>│
-     │       └──────────┘       └──────────┘           │
-     │              │                                   │
-     │<─────────────┘                                   │
-     │  Fix issues                                      │
+    D->>P: Push Bicep files
+    P->>BC: Run security scan
+
+    alt Issues Found
+        BC-->>P: Return FAILED
+        P-->>D: Block deployment
+        Note over D: Fix security issues
+        D->>P: Push fixes
+    else No Issues
+        BC-->>P: Return PASSED
+        P->>A: Deploy to Azure
+        A-->>P: Deployment successful
+        P-->>D: Notify success ✅
+    end
 ```
 
 **Implementation:**
@@ -795,30 +734,26 @@ jobs:
 
 ### Use Case 2: Compliance Audit Report
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    USE CASE: COMPLIANCE AUDIT                                │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    autonumber
+    participant R as Infrastructure Repo
+    participant BC as Biceps-Check
+    participant CR as Compliance Reports
 
-   Infrastructure                 Biceps-Check              Audit Report
-   Repository
-        │                              │                         │
-        │   Scan all Bicep files       │                         │
-        │─────────────────────────────>│                         │
-        │                              │                         │
-        │                              │  Generate CIS Report    │
-        │                              │────────────────────────>│
-        │                              │                         │
-        │                              │  Generate NIST Report   │
-        │                              │────────────────────────>│
-        │                              │                         │
-        │                              │  Generate PCI Report    │
-        │                              │────────────────────────>│
-        │                              │                         │
-        │                              │          ┌──────────────┤
-        │                              │          │ Compliance   │
-        │                              │          │ Dashboard    │
-        │                              │          └──────────────┤
+    R->>BC: Scan all Bicep files
+    BC->>BC: Analyze resources
+    BC->>BC: Map to frameworks
+
+    par Generate Reports
+        BC->>CR: CIS Azure Report
+        BC->>CR: NIST 800-53 Report
+        BC->>CR: PCI DSS Report
+    end
+
+    CR-->>CR: Compliance Dashboard
+
+    Note over CR: Overall Score: 78%<br/>✓ 106 Passed<br/>✗ 33 Failed
 ```
 
 **Example Output:**
@@ -834,17 +769,13 @@ jobs:
 
   OVERALL COMPLIANCE SCORE: 78%
 
-  ─────────────────────────────────────────────────────────────────────────────
-
   Section 4: Database Services
-  ───────────────────────────────────────────────────
     ✓ 4.1.1 SQL Server auditing enabled          [PASSED]
     ✓ 4.1.2 SQL Server TLS 1.2                   [PASSED]
     ✗ 4.2.1 PostgreSQL public access disabled    [FAILED]
     ✓ 4.2.2 PostgreSQL SSL enforcement           [PASSED]
 
   Section 6: Networking
-  ───────────────────────────────────────────────────
     ✗ 6.1 NSG SSH restriction                    [FAILED]
     ✗ 6.2 NSG RDP restriction                    [FAILED]
     ✓ 6.3 NSG flow logs enabled                  [PASSED]
@@ -854,30 +785,27 @@ jobs:
 
 ### Use Case 3: Developer Feedback Loop
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    USE CASE: LOCAL DEVELOPMENT                               │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph dev ["Developer Workflow"]
+        A[Write Bicep] --> B[Scan Locally]
+        B --> C{Issues?}
+        C -->|Yes| D[Fix Issues]
+        D --> A
+        C -->|No| E[Commit Code]
+    end
 
-  ┌─────────────────────────────────────────────────────────────────────────┐
-  │                         DEVELOPER WORKFLOW                               │
-  │                                                                          │
-  │    ┌────────┐      ┌────────┐      ┌────────┐      ┌────────┐          │
-  │    │ Write  │ ───> │  Scan  │ ───> │  Fix   │ ───> │ Commit │          │
-  │    │ Bicep  │      │ Locally│      │ Issues │      │ Code   │          │
-  │    └────────┘      └────────┘      └────────┘      └────────┘          │
-  │                         │                                               │
-  │                         ▼                                               │
-  │              ┌─────────────────────┐                                    │
-  │              │  IDE Integration    │                                    │
-  │              │  (VS Code, etc.)    │                                    │
-  │              │                     │                                    │
-  │              │  • Inline warnings  │                                    │
-  │              │  • Quick fixes      │                                    │
-  │              │  • Documentation    │                                    │
-  │              └─────────────────────┘                                    │
-  │                                                                          │
-  └─────────────────────────────────────────────────────────────────────────┘
+    subgraph ide ["IDE Integration"]
+        F[Inline Warnings]
+        G[Quick Fixes]
+        H[Documentation]
+    end
+
+    B --> ide
+    ide --> D
+
+    style dev fill:#e8f5e9,stroke:#388e3c
+    style ide fill:#e3f2fd,stroke:#1976d2
 ```
 
 ---
