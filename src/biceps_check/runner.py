@@ -123,9 +123,7 @@ class BicepsCheckRunner:
 
             # Run checks on each resource
             for resource in bicep_file.resources:
-                applicable_rules = self.registry.get_rules_for_resource(
-                    resource.resource_type
-                )
+                applicable_rules = self.registry.get_rules_for_resource(resource.resource_type)
 
                 for rule in applicable_rules:
                     check_result = self._run_check(rule, resource, file_path)
@@ -236,8 +234,9 @@ class BicepsCheckRunner:
         # Check config-level suppressions
         for suppression in self.config.suppressions:
             if suppression.id == rule_id:
+                if suppression.is_expired():
+                    continue
                 if not suppression.resources or resource.name in suppression.resources:
-                    # TODO: Check expiration date
                     return True
 
         # Inline suppressions are handled during parsing

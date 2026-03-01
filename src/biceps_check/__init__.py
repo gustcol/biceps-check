@@ -7,8 +7,7 @@ deviations before deployment.
 """
 
 __version__ = "0.1.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+__author__ = "Gustavo Colares"
 
 from biceps_check.rules.base import BaseRule, RuleResult, Severity
 from biceps_check.runner import BicepsCheckRunner

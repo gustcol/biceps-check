@@ -52,9 +52,7 @@ class MySQLPrivateEndpoints(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforMySQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
-    )
+    remediation = "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
     references = [
         "https://docs.microsoft.com/azure/mysql/flexible-server/concepts-networking-private-link",
     ]
@@ -157,9 +155,7 @@ class MySQLSSLRequired(BaseRule):
     severity = Severity.HIGH
     resource_types = ["Microsoft.DBforMySQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'require_secure_transport' server parameter to 'ON'."
-    )
+    remediation = "Set the 'require_secure_transport' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/mysql/flexible-server/concepts-networking-ssl-tls",
     ]
@@ -190,9 +186,7 @@ class MySQLAuditLogEnabled(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforMySQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'audit_log_enabled' server parameter to 'ON'."
-    )
+    remediation = "Set the 'audit_log_enabled' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/mysql/flexible-server/concepts-audit-logs",
     ]
@@ -252,9 +246,7 @@ class MySQLHighAvailability(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforMySQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Configure high availability mode in the 'highAvailability' property."
-    )
+    remediation = "Configure high availability mode in the 'highAvailability' property."
     references = [
         "https://docs.microsoft.com/azure/mysql/flexible-server/concepts-high-availability",
     ]

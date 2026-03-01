@@ -120,7 +120,9 @@ class CLIFormatter(BaseFormatter):
     def _format_check_compact(self, check) -> str:
         """Format a single check in compact format."""
         icon = self.SEVERITY_ICONS.get(check.severity, "[?]")
-        return f"{icon} {check.rule_id}: {check.file_path}:{check.line_number} - {check.resource_name}"
+        return (
+            f"{icon} {check.rule_id}: {check.file_path}:{check.line_number} - {check.resource_name}"
+        )
 
     def _format_check_detailed(self, check) -> str:
         """Format a single check in detailed format."""

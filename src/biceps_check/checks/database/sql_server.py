@@ -176,8 +176,7 @@ class SqlServerAzureAdOnlyAuth(BaseRule):
     resource_types = ["Microsoft.Sql/servers"]
     category = "database"
     remediation = (
-        "Set 'administrators.azureADOnlyAuthentication' to true in the "
-        "SQL Server properties."
+        "Set 'administrators.azureADOnlyAuthentication' to true in the SQL Server properties."
     )
     references = [
         "https://docs.microsoft.com/azure/azure-sql/database/authentication-azure-ad-only-authentication",
@@ -187,9 +186,7 @@ class SqlServerAzureAdOnlyAuth(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if Azure AD-only authentication is enabled."""
-        azure_ad_only = resource.get_property(
-            "properties.administrators.azureADOnlyAuthentication"
-        )
+        azure_ad_only = resource.get_property("properties.administrators.azureADOnlyAuthentication")
 
         if azure_ad_only is not True:
             return RuleResult.FAILED

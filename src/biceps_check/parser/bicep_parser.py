@@ -347,7 +347,7 @@ class BicepParser:
         depth = 0
         in_string = False
         escape_next = False
-        end = start
+        end = len(content)
 
         for i in range(start, len(content)):
             char = content[i]
@@ -406,7 +406,11 @@ class BicepParser:
                 # Find the value
                 if body[value_start] in "{[":
                     value = self._extract_block(body, value_start)
-                    properties[key] = self._parse_object(value) if value.startswith("{") else self._parse_array(value)
+                    properties[key] = (
+                        self._parse_object(value)
+                        if value.startswith("{")
+                        else self._parse_array(value)
+                    )
                 else:
                     # Simple value - find end of line or comma
                     end = body.find("\n", value_start)
@@ -448,7 +452,7 @@ class BicepParser:
                 break
 
             # Skip comments
-            if inner[pos:pos + 2] == "//":
+            if inner[pos : pos + 2] == "//":
                 newline = inner.find("\n", pos)
                 pos = newline + 1 if newline != -1 else len(inner)
                 continue
@@ -531,7 +535,7 @@ class BicepParser:
                 break
 
             # Skip comments
-            if inner[pos:pos + 2] == "//":
+            if inner[pos : pos + 2] == "//":
                 newline = inner.find("\n", pos)
                 pos = newline + 1 if newline != -1 else len(inner)
                 continue

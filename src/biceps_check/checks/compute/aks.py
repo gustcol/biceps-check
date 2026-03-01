@@ -53,8 +53,7 @@ class AksNetworkPolicy(BaseRule):
     resource_types = ["Microsoft.ContainerService/managedClusters"]
     category = "compute"
     remediation = (
-        "Set 'networkProfile.networkPolicy' to 'azure' or 'calico' in the "
-        "AKS cluster properties."
+        "Set 'networkProfile.networkPolicy' to 'azure' or 'calico' in the AKS cluster properties."
     )
     references = [
         "https://docs.microsoft.com/azure/aks/use-network-policies",
@@ -86,8 +85,7 @@ class AksPrivateCluster(BaseRule):
     resource_types = ["Microsoft.ContainerService/managedClusters"]
     category = "compute"
     remediation = (
-        "Set 'apiServerAccessProfile.enablePrivateCluster' to true in the "
-        "AKS cluster properties."
+        "Set 'apiServerAccessProfile.enablePrivateCluster' to true in the AKS cluster properties."
     )
     references = [
         "https://docs.microsoft.com/azure/aks/private-clusters",
@@ -121,8 +119,7 @@ class AksManagedIdentity(BaseRule):
     resource_types = ["Microsoft.ContainerService/managedClusters"]
     category = "compute"
     remediation = (
-        "Set 'identity.type' to 'SystemAssigned' or 'UserAssigned' in the "
-        "AKS cluster properties."
+        "Set 'identity.type' to 'SystemAssigned' or 'UserAssigned' in the AKS cluster properties."
     )
     references = [
         "https://docs.microsoft.com/azure/aks/use-managed-identity",
@@ -152,9 +149,7 @@ class AksAzureAdIntegration(BaseRule):
     severity = Severity.HIGH
     resource_types = ["Microsoft.ContainerService/managedClusters"]
     category = "compute"
-    remediation = (
-        "Configure 'aadProfile' with 'managed' set to true in the AKS cluster properties."
-    )
+    remediation = "Configure 'aadProfile' with 'managed' set to true in the AKS cluster properties."
     references = [
         "https://docs.microsoft.com/azure/aks/managed-aad",
     ]
@@ -205,9 +200,7 @@ class AksAuthorizedIpRanges(BaseRule):
         if private_cluster is True:
             return RuleResult.PASSED
 
-        ip_ranges = resource.get_property(
-            "properties.apiServerAccessProfile.authorizedIPRanges"
-        )
+        ip_ranges = resource.get_property("properties.apiServerAccessProfile.authorizedIPRanges")
 
         if ip_ranges is None or (isinstance(ip_ranges, list) and len(ip_ranges) == 0):
             return RuleResult.FAILED
@@ -290,9 +283,7 @@ class AksAzurePolicy(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.ContainerService/managedClusters"]
     category = "compute"
-    remediation = (
-        "Set 'addonProfiles.azurepolicy.enabled' to true in the AKS cluster properties."
-    )
+    remediation = "Set 'addonProfiles.azurepolicy.enabled' to true in the AKS cluster properties."
     references = [
         "https://docs.microsoft.com/azure/governance/policy/concepts/policy-for-kubernetes",
     ]
@@ -301,9 +292,7 @@ class AksAzurePolicy(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if Azure Policy add-on is enabled."""
-        policy_enabled = resource.get_property(
-            "properties.addonProfiles.azurepolicy.enabled"
-        )
+        policy_enabled = resource.get_property("properties.addonProfiles.azurepolicy.enabled")
 
         if policy_enabled is not True:
             return RuleResult.FAILED

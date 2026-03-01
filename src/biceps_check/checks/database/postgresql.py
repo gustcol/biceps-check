@@ -52,9 +52,7 @@ class PostgreSQLPrivateEndpoints(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
-    )
+    remediation = "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-networking-private-link",
     ]
@@ -90,9 +88,7 @@ class PostgreSQLEntraAuthOnly(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Configure Microsoft Entra authentication and disable local authentication."
-    )
+    remediation = "Configure Microsoft Entra authentication and disable local authentication."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/how-to-configure-sign-in-azure-ad-authentication",
     ]
@@ -165,9 +161,7 @@ class PostgreSQLSSLRequired(BaseRule):
     severity = Severity.HIGH
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'require_secure_transport' server parameter to 'ON'."
-    )
+    remediation = "Set the 'require_secure_transport' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-networking-ssl-tls",
     ]
@@ -198,9 +192,7 @@ class PostgreSQLLogConnections(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'log_connections' server parameter to 'ON'."
-    )
+    remediation = "Set the 'log_connections' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-logging",
     ]
@@ -230,9 +222,7 @@ class PostgreSQLLogDisconnections(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'log_disconnections' server parameter to 'ON'."
-    )
+    remediation = "Set the 'log_disconnections' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-logging",
     ]
@@ -262,9 +252,7 @@ class PostgreSQLLogCheckpoints(BaseRule):
     severity = Severity.LOW
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'log_checkpoints' server parameter to 'ON'."
-    )
+    remediation = "Set the 'log_checkpoints' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-logging",
     ]
@@ -294,9 +282,7 @@ class PostgreSQLConnectionThrottle(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DBforPostgreSQL/flexibleServers"]
     category = "database"
-    remediation = (
-        "Set the 'connection_throttle.enable' server parameter to 'ON'."
-    )
+    remediation = "Set the 'connection_throttle.enable' server parameter to 'ON'."
     references = [
         "https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-connection-throttling",
     ]

@@ -198,16 +198,12 @@ class RedisAuthenticationEnabled(BaseRule):
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if authentication is enabled."""
         # Check for Azure AD authentication
-        aad_enabled = resource.get_property(
-            "properties.redisConfiguration.aad-enabled"
-        )
+        aad_enabled = resource.get_property("properties.redisConfiguration.aad-enabled")
         if aad_enabled == "true":
             return RuleResult.PASSED
 
         # Access key auth is enabled by default unless explicitly disabled
-        disable_access_key = resource.get_property(
-            "properties.disableAccessKeyAuthentication"
-        )
+        disable_access_key = resource.get_property("properties.disableAccessKeyAuthentication")
         if disable_access_key is True:
             # If access keys disabled, must have AAD enabled
             if aad_enabled != "true":
@@ -229,8 +225,7 @@ class RedisPersistenceEnabled(BaseRule):
     resource_types = ["Microsoft.Cache/redis"]
     category = "database"
     remediation = (
-        "Enable RDB or AOF persistence in 'redisConfiguration'. "
-        "Requires Premium or Enterprise SKU."
+        "Enable RDB or AOF persistence in 'redisConfiguration'. Requires Premium or Enterprise SKU."
     )
     references = [
         "https://docs.microsoft.com/azure/azure-cache-for-redis/cache-how-to-premium-persistence",
@@ -241,16 +236,12 @@ class RedisPersistenceEnabled(BaseRule):
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if data persistence is configured."""
         # Check for RDB persistence
-        rdb_enabled = resource.get_property(
-            "properties.redisConfiguration.rdb-backup-enabled"
-        )
+        rdb_enabled = resource.get_property("properties.redisConfiguration.rdb-backup-enabled")
         if rdb_enabled == "true":
             return RuleResult.PASSED
 
         # Check for AOF persistence
-        aof_enabled = resource.get_property(
-            "properties.redisConfiguration.aof-backup-enabled"
-        )
+        aof_enabled = resource.get_property("properties.redisConfiguration.aof-backup-enabled")
         if aof_enabled == "true":
             return RuleResult.PASSED
 

@@ -119,9 +119,6 @@ flowchart TB
         O1[CLI]
         O2[JSON]
         O3[SARIF]
-        O4[JUnit]
-        O5[CSV]
-        O6[HTML]
     end
 
     BICEP --> BP
@@ -231,8 +228,8 @@ sequenceDiagram
 | NIST 800-53 Mapping | ✅ Complete | 137 rules mapped |
 | PCI DSS Mapping | ✅ Complete | 28 rules mapped |
 | CLI Output | ✅ Complete | Human-readable results |
-| JSON Output | 🔄 Planned | Machine-readable results |
-| SARIF Output | 🔄 Planned | GitHub Security integration |
+| JSON Output | ✅ Complete | Machine-readable results |
+| SARIF Output | ✅ Complete | GitHub Security integration |
 | CI/CD Actions | 🔄 Planned | GitHub Actions, Azure DevOps |
 | Custom Rules | 🔄 Planned | User-defined rules |
 | Auto-Remediation | 🔄 Planned | Fix suggestions |
@@ -264,33 +261,27 @@ pie showData
 ### Prerequisites
 
 - Python 3.10 or higher
-- pip or pipx
+- [uv](https://docs.astral.sh/uv/) for package management
 
 ### Install from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/biceps-check.git
+git clone https://github.com/gustcol/biceps-check.git
 cd biceps-check
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/macOS
-# or
-.\venv\Scripts\activate  # Windows
-
-# Install in development mode
-pip install -e ".[dev]"
+# Install dependencies (creates virtual environment automatically)
+uv sync --all-extras
 
 # Verify installation
-python -c "from biceps_check.rules.registry import RuleRegistry; r = RuleRegistry(); r.load_all_rules(); print(f'Loaded {r.count} rules')"
+uv run python -c "from biceps_check.rules.registry import RuleRegistry; r = RuleRegistry(); r.load_all_rules(); print(f'Loaded {r.count} rules')"
 ```
 
 ### Development Dependencies
 
 ```bash
 # Install all development tools
-pip install -e ".[dev]"
+uv sync --all-extras
 
 # Tools included:
 # - pytest: Testing framework
@@ -878,15 +869,17 @@ steps:
 
   - script: |
       biceps-check scan $(Build.SourcesDirectory) \
-        --output junit \
-        --output-file $(Build.ArtifactStagingDirectory)/results.xml
+        --output json \
+        --output-file $(Build.ArtifactStagingDirectory)/results.json
     displayName: 'Run Security Scan'
 
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: '$(Build.ArtifactStagingDirectory)/results.xml'
-      testRunTitle: 'Biceps-Check Security Scan'
+  - script: |
+      FAILED=$(python -c "import json; print(json.load(open('$(Build.ArtifactStagingDirectory)/results.json'))['summary']['failed'])")
+      if [ "$FAILED" -gt 0 ]; then
+        echo "##vso[task.logissue type=error]$FAILED security issues found"
+        exit 1
+      fi
+    displayName: 'Check Results'
 ```
 
 ### GitLab CI
@@ -965,7 +958,7 @@ suppressions:
 
 # Output configuration
 output:
-  format: cli  # cli, json, sarif, junit, csv, html
+  format: cli  # cli, json, sarif
   file: null   # Output file path (null = stdout)
 
   # Include in output
@@ -1138,24 +1131,20 @@ We welcome contributions! Here's how to get started:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/biceps-check.git
+git clone https://github.com/gustcol/biceps-check.git
 cd biceps-check
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install development dependencies
-pip install -e ".[dev]"
+# Install dependencies
+uv sync --all-extras
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Run type checking
-ty check src/biceps_check/
+uv run ty check src
 
 # Run linting
-ruff check src/biceps_check/
+uv run ruff check src tests
 ```
 
 ### Adding New Rules

@@ -10,6 +10,46 @@ from biceps_check.parser.models import BicepResource
 from biceps_check.rules.base import BaseRule, RuleResult, Severity
 
 
+def _port_matches(port_spec: str, target_port: int) -> bool:
+    """Check if a port specification matches a target port.
+
+    Handles exact ports, wildcard (*), and port ranges (e.g., '80-443').
+    """
+    port_spec = port_spec.strip()
+    if port_spec == "*":
+        return True
+    if "-" in port_spec:
+        try:
+            start, end = port_spec.split("-", 1)
+            return int(start) <= target_port <= int(end)
+        except ValueError:
+            return False
+    try:
+        return int(port_spec) == target_port
+    except ValueError:
+        return False
+
+
+def _is_dangerous_rule(rule: dict, port: int) -> bool:
+    """Check if a rule allows access from any source on a specific port."""
+    props = rule.get("properties", {})
+    if props.get("access") != "Allow":
+        return False
+    if props.get("direction") != "Inbound":
+        return False
+
+    source = props.get("sourceAddressPrefix", "")
+    if source not in ["*", "0.0.0.0/0", "Internet", "Any"]:
+        return False
+
+    dest_port = props.get("destinationPortRange", "")
+    dest_ports = props.get("destinationPortRanges", [])
+
+    if dest_port and _port_matches(dest_port, port):
+        return True
+    return any(_port_matches(p, port) for p in dest_ports)
+
+
 class NsgNoSshFromInternet(BaseRule):
     """Check that NSG does not allow SSH from the internet."""
 
@@ -40,31 +80,10 @@ class NsgNoSshFromInternet(BaseRule):
         security_rules = resource.get_property("properties.securityRules") or []
 
         for rule in security_rules:
-            if self._is_dangerous_rule(rule, 22):
+            if _is_dangerous_rule(rule, 22):
                 return RuleResult.FAILED
 
         return RuleResult.PASSED
-
-    def _is_dangerous_rule(self, rule: dict, port: int) -> bool:
-        """Check if a rule allows access from any source on a specific port."""
-        if rule.get("properties", {}).get("access") != "Allow":
-            return False
-        if rule.get("properties", {}).get("direction") != "Inbound":
-            return False
-
-        source = rule.get("properties", {}).get("sourceAddressPrefix", "")
-        if source not in ["*", "0.0.0.0/0", "Internet", "Any"]:
-            return False
-
-        dest_port = rule.get("properties", {}).get("destinationPortRange", "")
-        dest_ports = rule.get("properties", {}).get("destinationPortRanges", [])
-
-        if dest_port == "*" or str(port) in dest_port:
-            return True
-        if str(port) in dest_ports or "*" in dest_ports:
-            return True
-
-        return False
 
 
 class NsgNoRdpFromInternet(BaseRule):
@@ -97,31 +116,10 @@ class NsgNoRdpFromInternet(BaseRule):
         security_rules = resource.get_property("properties.securityRules") or []
 
         for rule in security_rules:
-            if self._is_dangerous_rule(rule, 3389):
+            if _is_dangerous_rule(rule, 3389):
                 return RuleResult.FAILED
 
         return RuleResult.PASSED
-
-    def _is_dangerous_rule(self, rule: dict, port: int) -> bool:
-        """Check if a rule allows access from any source on a specific port."""
-        if rule.get("properties", {}).get("access") != "Allow":
-            return False
-        if rule.get("properties", {}).get("direction") != "Inbound":
-            return False
-
-        source = rule.get("properties", {}).get("sourceAddressPrefix", "")
-        if source not in ["*", "0.0.0.0/0", "Internet", "Any"]:
-            return False
-
-        dest_port = rule.get("properties", {}).get("destinationPortRange", "")
-        dest_ports = rule.get("properties", {}).get("destinationPortRanges", [])
-
-        if dest_port == "*" or str(port) in dest_port:
-            return True
-        if str(port) in dest_ports or "*" in dest_ports:
-            return True
-
-        return False
 
 
 class NsgNoAllPortsFromInternet(BaseRule):
@@ -225,23 +223,8 @@ class NsgRestrictDatabasePorts(BaseRule):
         security_rules = resource.get_property("properties.securityRules") or []
 
         for rule in security_rules:
-            props = rule.get("properties", {})
-            if props.get("access") != "Allow":
-                continue
-            if props.get("direction") != "Inbound":
-                continue
-
-            source = props.get("sourceAddressPrefix", "")
-            if source not in ["*", "0.0.0.0/0", "Internet", "Any"]:
-                continue
-
-            dest_port = props.get("destinationPortRange", "")
-            dest_ports = props.get("destinationPortRanges", [])
-
             for port in self.DATABASE_PORTS:
-                if str(port) == dest_port or str(port) in dest_ports:
-                    return RuleResult.FAILED
-                if dest_port == "*":
+                if _is_dangerous_rule(rule, port):
                     return RuleResult.FAILED
 
         return RuleResult.PASSED

@@ -27,7 +27,7 @@ This project adheres to a Code of Conduct. By participating, you are expected to
    ```
 3. Add the upstream remote:
    ```bash
-   git remote add upstream https://github.com/your-org/biceps-check.git
+   git remote add upstream https://github.com/gustcol/biceps-check.git
    ```
 
 ## Development Setup
@@ -35,22 +35,16 @@ This project adheres to a Code of Conduct. By participating, you are expected to
 ### Prerequisites
 
 - Python 3.10 or higher
-- pip or pipx for package management
+- [uv](https://docs.astral.sh/uv/) for package management
 
 ### Installation
 
-1. Create a virtual environment:
+1. Install dependencies and create virtual environment:
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   uv sync --all-extras
    ```
 
-2. Install development dependencies:
-   ```bash
-   pip install -e ".[dev]"
-   ```
-
-3. Install pre-commit hooks:
+2. Install pre-commit hooks:
    ```bash
    pre-commit install
    ```
@@ -201,25 +195,22 @@ tests/
 
 ## Code Style
 
-We use several tools to maintain code quality:
+We use the following tools to maintain code quality:
 
-- **Black**: Code formatting
-- **isort**: Import sorting
-- **Ruff**: Linting
-- **mypy**: Type checking
+- **Ruff**: Linting and code formatting (replaces Black, isort, and Flake8)
+- **ty**: Fast Python type checking (from Astral, replaces mypy)
 
 ### Running Linters
 
 ```bash
 # Format code
-black src tests
-isort src tests
+uv run ruff format src tests
 
 # Run linter
-ruff check src tests
+uv run ruff check src tests
 
 # Type check
-mypy src
+uv run ty check src
 ```
 
 ### Pre-commit Hooks
