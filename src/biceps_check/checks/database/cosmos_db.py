@@ -23,8 +23,7 @@ class CosmosDbFirewallRules(BaseRule):
     resource_types = ["Microsoft.DocumentDB/databaseAccounts"]
     category = "database"
     remediation = (
-        "Configure 'ipRules' in the Cosmos DB properties to specify allowed "
-        "IP addresses or ranges."
+        "Configure 'ipRules' in the Cosmos DB properties to specify allowed IP addresses or ranges."
     )
     references = [
         "https://docs.microsoft.com/azure/cosmos-db/how-to-configure-firewall",
@@ -149,9 +148,7 @@ class CosmosDbContinuousBackup(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DocumentDB/databaseAccounts"]
     category = "database"
-    remediation = (
-        "Set 'backupPolicy.type' to 'Continuous' in the Cosmos DB properties."
-    )
+    remediation = "Set 'backupPolicy.type' to 'Continuous' in the Cosmos DB properties."
     references = [
         "https://docs.microsoft.com/azure/cosmos-db/continuous-backup-restore-introduction",
     ]
@@ -220,9 +217,7 @@ class CosmosDbVirtualNetworkRules(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if virtual network rules are configured."""
-        vnet_enabled = resource.get_property(
-            "properties.isVirtualNetworkFilterEnabled"
-        )
+        vnet_enabled = resource.get_property("properties.isVirtualNetworkFilterEnabled")
         vnet_rules = resource.get_property("properties.virtualNetworkRules")
         public_access = resource.get_property("properties.publicNetworkAccess")
 

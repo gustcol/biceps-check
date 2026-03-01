@@ -53,8 +53,7 @@ class ACRPrivateEndpoint(BaseRule):
     resource_types = ["Microsoft.ContainerRegistry/registries"]
     category = "compute"
     remediation = (
-        "Configure private endpoints for the container registry and disable "
-        "public network access."
+        "Configure private endpoints for the container registry and disable public network access."
     )
     references = [
         "https://docs.microsoft.com/azure/container-registry/container-registry-private-link",
@@ -193,9 +192,7 @@ class ACRRetentionPolicy(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if retention policy is configured."""
-        retention_status = resource.get_property(
-            "properties.policies.retentionPolicy.status"
-        )
+        retention_status = resource.get_property("properties.policies.retentionPolicy.status")
 
         if retention_status != "enabled":
             return RuleResult.FAILED
@@ -264,9 +261,7 @@ class ACRZoneRedundancy(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.ContainerRegistry/registries"]
     category = "compute"
-    remediation = (
-        "Set 'zoneRedundancy' to 'Enabled'. Requires Premium SKU in supported regions."
-    )
+    remediation = "Set 'zoneRedundancy' to 'Enabled'. Requires Premium SKU in supported regions."
     references = [
         "https://docs.microsoft.com/azure/container-registry/zone-redundancy",
     ]

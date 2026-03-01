@@ -84,9 +84,7 @@ class DataFactoryPrivateEndpoints(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.DataFactory/factories"]
     category = "integration"
-    remediation = (
-        "Configure private endpoints for Data Factory and disable public network access."
-    )
+    remediation = "Configure private endpoints for Data Factory and disable public network access."
     references = [
         "https://docs.microsoft.com/azure/data-factory/data-factory-private-link",
     ]
@@ -173,7 +171,10 @@ class DataFactoryGitIntegration(BaseRule):
                 return RuleResult.PASSED
 
         if "repoConfiguration" in raw_content:
-            if "FactoryGitHubConfiguration" in raw_content or "FactoryVSTSConfiguration" in raw_content:
+            if (
+                "FactoryGitHubConfiguration" in raw_content
+                or "FactoryVSTSConfiguration" in raw_content
+            ):
                 return RuleResult.PASSED
 
         return RuleResult.FAILED

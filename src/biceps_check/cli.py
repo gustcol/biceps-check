@@ -33,7 +33,7 @@ def main() -> None:
 @click.option(
     "--output",
     "-o",
-    type=click.Choice(["cli", "json", "sarif", "junit", "csv", "html"]),
+    type=click.Choice(["cli", "json", "sarif"]),
     default="cli",
     help="Output format",
 )
@@ -149,11 +149,20 @@ def scan(
 @click.option(
     "--category",
     "-c",
-    type=click.Choice([
-        "compute", "storage", "networking", "database",
-        "identity", "monitoring", "messaging", "integration",
-        "analytics", "security"
-    ]),
+    type=click.Choice(
+        [
+            "compute",
+            "storage",
+            "networking",
+            "database",
+            "identity",
+            "monitoring",
+            "messaging",
+            "integration",
+            "analytics",
+            "security",
+        ]
+    ),
     help="Filter rules by category",
 )
 @click.option(
@@ -230,11 +239,11 @@ def _get_formatter(output: str, no_color: bool, compact: bool):
         "cli": CLIFormatter(no_color=no_color, compact=compact),
         "json": JSONFormatter(),
         "sarif": SARIFFormatter(),
-        # "junit": JUnitFormatter(),
-        # "csv": CSVFormatter(),
-        # "html": HTMLFormatter(),
     }
-    return formatters.get(output, CLIFormatter())
+    formatter = formatters.get(output)
+    if formatter is None:
+        raise click.UsageError(f"Output format '{output}' is not yet implemented.")
+    return formatter
 
 
 def _get_exit_code(results, fail_on: str) -> int:
@@ -249,9 +258,7 @@ def _get_exit_code(results, fail_on: str) -> int:
 
     if fail_on == "critical" and Severity.CRITICAL in severities:
         return 1
-    if fail_on == "high" and (
-        Severity.CRITICAL in severities or Severity.HIGH in severities
-    ):
+    if fail_on == "high" and (Severity.CRITICAL in severities or Severity.HIGH in severities):
         return 1
 
     return 0
@@ -272,13 +279,13 @@ def _print_rule_details(rule) -> None:
 {rule.description}
 
 **Resource Types:**
-{', '.join(rule.resource_types)}
+{", ".join(rule.resource_types)}
 
 **Remediation:**
 {rule.remediation}
 
 **References:**
-{chr(10).join(f'- {ref}' for ref in rule.references)}
+{chr(10).join(f"- {ref}" for ref in rule.references)}
 """
     console.print(Panel(Markdown(content), title=f"Rule: {rule.id}"))
 

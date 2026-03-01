@@ -60,9 +60,7 @@ class EventHubPrivateEndpoint(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.EventHub/namespaces"]
     category = "messaging"
-    remediation = (
-        "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
-    )
+    remediation = "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
     references = [
         "https://docs.microsoft.com/azure/event-hubs/private-link-service",
     ]
@@ -181,9 +179,7 @@ class EventHubAutoInflate(BaseRule):
     severity = Severity.LOW
     resource_types = ["Microsoft.EventHub/namespaces"]
     category = "messaging"
-    remediation = (
-        "Enable 'isAutoInflateEnabled' and set 'maximumThroughputUnits' appropriately."
-    )
+    remediation = "Enable 'isAutoInflateEnabled' and set 'maximumThroughputUnits' appropriately."
     references = [
         "https://docs.microsoft.com/azure/event-hubs/event-hubs-auto-inflate",
     ]
@@ -242,8 +238,7 @@ class EventHubCaptureEnabled(BaseRule):
     resource_types = ["Microsoft.EventHub/namespaces"]
     category = "messaging"
     remediation = (
-        "Enable capture on event hubs that require data retention for compliance "
-        "or audit purposes."
+        "Enable capture on event hubs that require data retention for compliance or audit purposes."
     )
     references = [
         "https://docs.microsoft.com/azure/event-hubs/event-hubs-capture-overview",

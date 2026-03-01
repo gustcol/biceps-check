@@ -169,5 +169,3 @@ class BaseRule(ABC):
         if self.azure_security_benchmark:
             mappings["Azure Security Benchmark"] = self.azure_security_benchmark
         return mappings
-
-

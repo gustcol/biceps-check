@@ -146,9 +146,7 @@ class KeyVaultPrivateEndpoint(BaseRule):
     severity = Severity.HIGH
     resource_types = ["Microsoft.KeyVault/vaults"]
     category = "identity"
-    remediation = (
-        "Configure private endpoints for the Key Vault and disable public network access."
-    )
+    remediation = "Configure private endpoints for the Key Vault and disable public network access."
     references = [
         "https://docs.microsoft.com/azure/key-vault/general/private-link-service",
     ]

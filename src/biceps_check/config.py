@@ -121,7 +121,7 @@ def generate_default_config() -> str:
     Returns:
         YAML string with default configuration.
     """
-    return '''# Biceps-Check Configuration File
+    return """# Biceps-Check Configuration File
 # https://docs.biceps-check.io/configuration
 
 # Framework to scan (currently only bicep is supported)
@@ -163,4 +163,4 @@ output:
 
 # Custom rules directory (uncomment to use)
 # custom_rules_dir: ./custom_rules
-'''
+"""

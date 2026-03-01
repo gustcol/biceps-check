@@ -140,8 +140,7 @@ class AppServiceAuthEnabled(BaseRule):
     id = "BCK_AZURE_APP_005"
     name = "App Service should have authentication enabled"
     description = (
-        "Enable App Service Authentication to protect your application from "
-        "unauthenticated access."
+        "Enable App Service Authentication to protect your application from unauthenticated access."
     )
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.Web/sites"]
@@ -161,9 +160,7 @@ class AppServiceAuthEnabled(BaseRule):
         """Check if authentication is enabled."""
         # Note: Auth settings are often configured via a separate resource
         # This is a simplified check
-        auth_enabled = resource.get_property(
-            "properties.siteConfig.authEnabled"
-        )
+        auth_enabled = resource.get_property("properties.siteConfig.authEnabled")
 
         # This property doesn't always exist in Bicep templates
         # as auth is often configured separately
@@ -195,9 +192,7 @@ class AppServiceRemoteDebuggingDisabled(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if remote debugging is disabled."""
-        remote_debugging = resource.get_property(
-            "properties.siteConfig.remoteDebuggingEnabled"
-        )
+        remote_debugging = resource.get_property("properties.siteConfig.remoteDebuggingEnabled")
 
         if remote_debugging is True:
             return RuleResult.FAILED
@@ -217,9 +212,7 @@ class AppServiceClientCertificates(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.Web/sites"]
     category = "compute"
-    remediation = (
-        "Set 'clientCertEnabled' to true and configure 'clientCertMode' as appropriate."
-    )
+    remediation = "Set 'clientCertEnabled' to true and configure 'clientCertMode' as appropriate."
     references = [
         "https://docs.microsoft.com/azure/app-service/app-service-web-configure-tls-mutual-auth",
     ]
@@ -291,9 +284,7 @@ class AppServiceDiagnosticLogs(BaseRule):
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if diagnostic logging is enabled."""
         http_logs = resource.get_property("properties.siteConfig.httpLoggingEnabled")
-        detailed_errors = resource.get_property(
-            "properties.siteConfig.detailedErrorLoggingEnabled"
-        )
+        detailed_errors = resource.get_property("properties.siteConfig.detailedErrorLoggingEnabled")
 
         # Both should be enabled for comprehensive logging
         if http_logs is not True and detailed_errors is not True:

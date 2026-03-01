@@ -24,11 +24,7 @@ class TestStorageAccountHttpsOnly:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "supportsHttpsTrafficOnly": True
-                }
-            },
+            properties={"properties": {"supportsHttpsTrafficOnly": True}},
             line_number=1,
         )
         rule = StorageAccountHttpsOnly()
@@ -41,11 +37,7 @@ class TestStorageAccountHttpsOnly:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "supportsHttpsTrafficOnly": False
-                }
-            },
+            properties={"properties": {"supportsHttpsTrafficOnly": False}},
             line_number=1,
         )
         rule = StorageAccountHttpsOnly()
@@ -58,9 +50,7 @@ class TestStorageAccountHttpsOnly:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {}
-            },
+            properties={"properties": {}},
             line_number=1,
         )
         rule = StorageAccountHttpsOnly()
@@ -77,11 +67,7 @@ class TestStorageAccountMinimumTls:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "minimumTlsVersion": "TLS1_2"
-                }
-            },
+            properties={"properties": {"minimumTlsVersion": "TLS1_2"}},
             line_number=1,
         )
         rule = StorageAccountMinimumTls()
@@ -94,11 +80,7 @@ class TestStorageAccountMinimumTls:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "minimumTlsVersion": "TLS1_0"
-                }
-            },
+            properties={"properties": {"minimumTlsVersion": "TLS1_0"}},
             line_number=1,
         )
         rule = StorageAccountMinimumTls()
@@ -111,9 +93,7 @@ class TestStorageAccountMinimumTls:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {}
-            },
+            properties={"properties": {}},
             line_number=1,
         )
         rule = StorageAccountMinimumTls()
@@ -130,11 +110,7 @@ class TestStorageAccountPublicBlobAccess:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "allowBlobPublicAccess": False
-                }
-            },
+            properties={"properties": {"allowBlobPublicAccess": False}},
             line_number=1,
         )
         rule = StorageAccountPublicBlobAccess()
@@ -147,11 +123,7 @@ class TestStorageAccountPublicBlobAccess:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "allowBlobPublicAccess": True
-                }
-            },
+            properties={"properties": {"allowBlobPublicAccess": True}},
             line_number=1,
         )
         rule = StorageAccountPublicBlobAccess()
@@ -168,13 +140,7 @@ class TestStorageAccountNetworkRules:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "networkAcls": {
-                        "defaultAction": "Deny"
-                    }
-                }
-            },
+            properties={"properties": {"networkAcls": {"defaultAction": "Deny"}}},
             line_number=1,
         )
         rule = StorageAccountNetworkRules()
@@ -187,13 +153,7 @@ class TestStorageAccountNetworkRules:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "networkAcls": {
-                        "defaultAction": "Allow"
-                    }
-                }
-            },
+            properties={"properties": {"networkAcls": {"defaultAction": "Allow"}}},
             line_number=1,
         )
         rule = StorageAccountNetworkRules()
@@ -206,9 +166,7 @@ class TestStorageAccountNetworkRules:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {}
-            },
+            properties={"properties": {}},
             line_number=1,
         )
         rule = StorageAccountNetworkRules()
@@ -225,13 +183,7 @@ class TestStorageAccountInfrastructureEncryption:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "encryption": {
-                        "requireInfrastructureEncryption": True
-                    }
-                }
-            },
+            properties={"properties": {"encryption": {"requireInfrastructureEncryption": True}}},
             line_number=1,
         )
         rule = StorageAccountInfrastructureEncryption()
@@ -244,13 +196,7 @@ class TestStorageAccountInfrastructureEncryption:
             name="testStorage",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "encryption": {
-                        "requireInfrastructureEncryption": False
-                    }
-                }
-            },
+            properties={"properties": {"encryption": {"requireInfrastructureEncryption": False}}},
             line_number=1,
         )
         rule = StorageAccountInfrastructureEncryption()

@@ -89,9 +89,7 @@ class ServiceBusPrivateEndpoint(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.ServiceBus/namespaces"]
     category = "messaging"
-    remediation = (
-        "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
-    )
+    remediation = "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
     references = [
         "https://docs.microsoft.com/azure/service-bus-messaging/private-link-service",
     ]
@@ -254,9 +252,7 @@ class ServiceBusZoneRedundancy(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.ServiceBus/namespaces"]
     category = "messaging"
-    remediation = (
-        "Set 'zoneRedundant' to true. Requires Premium SKU in supported regions."
-    )
+    remediation = "Set 'zoneRedundant' to true. Requires Premium SKU in supported regions."
     references = [
         "https://docs.microsoft.com/azure/service-bus-messaging/service-bus-outages-disasters",
     ]

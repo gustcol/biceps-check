@@ -89,8 +89,7 @@ class FunctionAppAuthEnabled(BaseRule):
     id = "BCK_AZURE_FUNC_003"
     name = "Function App should have authentication enabled"
     description = (
-        "Enable Function App authentication to protect your functions from "
-        "unauthenticated access."
+        "Enable Function App authentication to protect your functions from unauthenticated access."
     )
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.Web/sites"]
@@ -133,9 +132,7 @@ class FunctionAppLatestRuntime(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.Web/sites"]
     category = "compute"
-    remediation = (
-        "Update 'FUNCTIONS_EXTENSION_VERSION' to '~4' for the latest runtime."
-    )
+    remediation = "Update 'FUNCTIONS_EXTENSION_VERSION' to '~4' for the latest runtime."
     references = [
         "https://docs.microsoft.com/azure/azure-functions/functions-versions",
     ]
@@ -213,9 +210,7 @@ class FunctionAppPrivateEndpoint(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.Web/sites"]
     category = "compute"
-    remediation = (
-        "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
-    )
+    remediation = "Configure private endpoints and set 'publicNetworkAccess' to 'Disabled'."
     references = [
         "https://docs.microsoft.com/azure/azure-functions/functions-create-private-site-access",
     ]

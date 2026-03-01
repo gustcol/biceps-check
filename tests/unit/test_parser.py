@@ -23,7 +23,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 """
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.bicep', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".bicep", delete=False) as f:
             f.write(bicep_content)
             f.flush()
 
@@ -34,9 +34,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
             assert len(result.resources) == 1
 
             resource = result.resources[0]
-            assert resource.name == 'storageAccount'
-            assert resource.resource_type == 'Microsoft.Storage/storageAccounts'
-            assert resource.api_version == '2023-01-01'
+            assert resource.name == "storageAccount"
+            assert resource.resource_type == "Microsoft.Storage/storageAccounts"
+            assert resource.api_version == "2023-01-01"
 
     def test_parse_target_scope(self):
         """Should parse target scope declaration."""
@@ -48,14 +48,14 @@ resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   location: 'eastus'
 }
 """
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.bicep', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".bicep", delete=False) as f:
             f.write(bicep_content)
             f.flush()
 
             parser = BicepParser()
             result = parser.parse_file(Path(f.name))
 
-            assert result.target_scope == 'subscription'
+            assert result.target_scope == "subscription"
 
     def test_parse_suppression_comment(self):
         """Should parse suppression comments."""
@@ -66,7 +66,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   location: 'eastus'
 }
 """
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.bicep', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".bicep", delete=False) as f:
             f.write(bicep_content)
             f.flush()
 
@@ -75,7 +75,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 
             assert len(result.resources) == 1
             resource = result.resources[0]
-            assert 'BCK_AZURE_ST_001' in resource.suppressions
+            assert "BCK_AZURE_ST_001" in resource.suppressions
 
     def test_default_target_scope(self):
         """Should default to resourceGroup scope."""
@@ -85,14 +85,14 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   location: 'eastus'
 }
 """
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.bicep', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".bicep", delete=False) as f:
             f.write(bicep_content)
             f.flush()
 
             parser = BicepParser()
             result = parser.parse_file(Path(f.name))
 
-            assert result.target_scope == 'resourceGroup'
+            assert result.target_scope == "resourceGroup"
 
 
 class TestBicepResource:
@@ -104,10 +104,7 @@ class TestBicepResource:
             name="test",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "name": "teststorage",
-                "location": "eastus"
-            },
+            properties={"name": "teststorage", "location": "eastus"},
             line_number=1,
         )
 
@@ -120,13 +117,7 @@ class TestBicepResource:
             name="test",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "properties": {
-                    "networkAcls": {
-                        "defaultAction": "Deny"
-                    }
-                }
-            },
+            properties={"properties": {"networkAcls": {"defaultAction": "Deny"}}},
             line_number=1,
         )
 
@@ -151,9 +142,7 @@ class TestBicepResource:
             name="test",
             resource_type="Microsoft.Storage/storageAccounts",
             api_version="2023-01-01",
-            properties={
-                "name": "teststorage"
-            },
+            properties={"name": "teststorage"},
             line_number=1,
         )
 

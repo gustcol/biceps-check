@@ -37,9 +37,7 @@ class VMDiskEncryption(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if disk encryption is enabled."""
-        encryption_at_host = resource.get_property(
-            "properties.securityProfile.encryptionAtHost"
-        )
+        encryption_at_host = resource.get_property("properties.securityProfile.encryptionAtHost")
 
         if encryption_at_host is True:
             return RuleResult.PASSED
@@ -79,9 +77,7 @@ class VMNoPublicIP(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if VM has public IP."""
-        network_interfaces = resource.get_property(
-            "properties.networkProfile.networkInterfaces"
-        )
+        network_interfaces = resource.get_property("properties.networkProfile.networkInterfaces")
 
         if not network_interfaces:
             return RuleResult.PASSED
@@ -140,9 +136,7 @@ class VMBootDiagnostics(BaseRule):
     severity = Severity.LOW
     resource_types = ["Microsoft.Compute/virtualMachines"]
     category = "compute"
-    remediation = (
-        "Enable boot diagnostics in 'diagnosticsProfile.bootDiagnostics.enabled'."
-    )
+    remediation = "Enable boot diagnostics in 'diagnosticsProfile.bootDiagnostics.enabled'."
     references = [
         "https://docs.microsoft.com/azure/virtual-machines/boot-diagnostics",
     ]
@@ -152,9 +146,7 @@ class VMBootDiagnostics(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if boot diagnostics is enabled."""
-        boot_diag = resource.get_property(
-            "properties.diagnosticsProfile.bootDiagnostics.enabled"
-        )
+        boot_diag = resource.get_property("properties.diagnosticsProfile.bootDiagnostics.enabled")
 
         if boot_diag is not True:
             return RuleResult.FAILED
@@ -261,9 +253,7 @@ class VMvTPM(BaseRule):
     severity = Severity.MEDIUM
     resource_types = ["Microsoft.Compute/virtualMachines"]
     category = "compute"
-    remediation = (
-        "Set 'securityProfile.uefiSettings.vTpmEnabled' to true with TrustedLaunch."
-    )
+    remediation = "Set 'securityProfile.uefiSettings.vTpmEnabled' to true with TrustedLaunch."
     references = [
         "https://docs.microsoft.com/azure/virtual-machines/trusted-launch",
     ]
@@ -272,9 +262,7 @@ class VMvTPM(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if vTPM is enabled."""
-        vtpm = resource.get_property(
-            "properties.securityProfile.uefiSettings.vTpmEnabled"
-        )
+        vtpm = resource.get_property("properties.securityProfile.uefiSettings.vTpmEnabled")
 
         if vtpm is not True:
             return RuleResult.FAILED
@@ -360,9 +348,7 @@ class VMAdminPasswordComplexity(BaseRule):
             return RuleResult.PASSED
 
         # Check for SSH key configuration
-        ssh_keys = resource.get_property(
-            "properties.osProfile.linuxConfiguration.ssh.publicKeys"
-        )
+        ssh_keys = resource.get_property("properties.osProfile.linuxConfiguration.ssh.publicKeys")
         if ssh_keys:
             return RuleResult.PASSED
 
@@ -399,9 +385,7 @@ class VMGuestAgent(BaseRule):
 
     def check(self, resource: BicepResource) -> RuleResult:
         """Check if guest agent is enabled."""
-        allow_extensions = resource.get_property(
-            "properties.osProfile.allowExtensionOperations"
-        )
+        allow_extensions = resource.get_property("properties.osProfile.allowExtensionOperations")
 
         # Default is true if not specified
         if allow_extensions is False:

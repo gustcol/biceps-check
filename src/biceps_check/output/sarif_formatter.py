@@ -52,7 +52,9 @@ class SARIFFormatter(BaseFormatter):
                     "invocations": [
                         {
                             "executionSuccessful": len(results.errors) == 0,
-                            "endTimeUtc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                            "endTimeUtc": datetime.now(timezone.utc)
+                            .isoformat()
+                            .replace("+00:00", "Z"),
                         }
                     ],
                 }
@@ -67,7 +69,7 @@ class SARIFFormatter(BaseFormatter):
             "driver": {
                 "name": "biceps-check",
                 "version": __version__,
-                "informationUri": "https://github.com/your-org/biceps-check",
+                "informationUri": "https://github.com/gustcol/biceps-check",
                 "rules": [],  # Rules are populated dynamically
             }
         }
