@@ -296,8 +296,7 @@ site/
 # GitHub Actions
 .github/actions/*/node_modules/
 
-# Local tool config
-.claude/
+
 
 # =============================================================================
 # Miscellaneous
